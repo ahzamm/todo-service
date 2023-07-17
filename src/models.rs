@@ -1,6 +1,6 @@
 use serde::Serialize;
 
 #[derive(Serialize)]
-pub struct Status{
-  pub status: String
+pub struct Status {
+    pub status: String,
 }
