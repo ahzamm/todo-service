@@ -11,10 +11,5 @@ serde = {version = '1.0.104', features = ["derive"]}
 dotenv = "0.15.0"
 config = "0.10.1"
 
+# cargo watch -q -c -x run
 
-[dev-dependencies]
-cargo-watch = "8.0"
-
-
-[scripts]
-watch = "cargo watch -x 'run'"
