@@ -1,15 +1,14 @@
 mod config;
-mod models;
-mod handlers;
 mod db;
+mod handlers;
+mod models;
 
-use crate::handlers::*;
 use crate::config::Config;
+use crate::handlers::*;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use std::io;
 use tokio_postgres::NoTls;
-
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {

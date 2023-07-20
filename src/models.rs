@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use tokio_pg_mapper_derive::PostgresMapper;
 
 #[derive(Serialize)]

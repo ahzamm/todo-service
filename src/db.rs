@@ -1,4 +1,4 @@
-use crate::models::{TodoList};
+use crate::models::TodoList;
 use deadpool_postgres::Client;
 use std::io;
 use tokio_pg_mapper::FromTokioPostgresRow;
