@@ -18,4 +18,5 @@ tokio-postgres = "0.5.1"
 
 # cargo watch -q -c -x run
 # psql -h 127.0.0.1 -p 5433 -U actix actix < database.sql
+# rustfmt --edition 2021 src/*
 
