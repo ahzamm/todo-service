@@ -1,8 +1,9 @@
 mod config;
 mod models;
 mod handlers;
+mod db;
 
-use crate::handlers::status;
+use crate::handlers::*;
 use crate::config::Config;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
@@ -26,6 +27,7 @@ async fn main() -> io::Result<()> {
         App::new()
             .data(pool.clone())
             .route("/", web::get().to(status))
+            .route("/todos{_:/?}", web::get().to(get_todos))
     })
     .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
