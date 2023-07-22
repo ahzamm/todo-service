@@ -1,1 +1,10 @@
+
+### All Lists
 GET http://localhost:8080/todos
+
+
+
+###Items in a List
+GET http://localhost:8080/todo_items/1/items/
+###
+GET http://localhost:8080/todo_items/2/items/
