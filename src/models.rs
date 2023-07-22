@@ -21,3 +21,14 @@ pub struct TodoItem {
     pub checked: bool,
     pub list_id: i32,
 }
+
+#[derive(Deserialize)]
+pub struct TodoListRequest {
+    pub title: String,
+}
+
+#[derive(Deserialize)]
+pub struct TodoItemRequest {
+    pub title: String,
+    pub list_id: i32,
+}

@@ -17,3 +17,13 @@ Content-Type: application/json
 {
   "title": "List4"
 }
+
+
+### Create Item
+POST http://localhost:8080/create_item
+Content-Type: application/json
+
+{
+  "title": "Item6",
+  "list_id": 1
+}

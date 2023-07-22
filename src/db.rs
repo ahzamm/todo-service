@@ -50,3 +50,20 @@ pub async fn create_todo(client: &Client, title: String) -> Result<Vec<TodoItem>
 
     Ok(todo)
 }
+
+pub async fn create_todo_item(
+    client: &Client,
+    title: &String,
+    list_id: &i32,
+) -> Result<(), io::Error> {
+    let statement = client
+        .prepare("INSERT INTO todo_item (title, checked, list_id) VALUES ($1, $2, $3)")
+        .await
+        .unwrap();
+    client
+        .query(&statement, &[&title, &false, &list_id])
+        .await
+        .expect("Error creating new item");
+
+    Ok(())
+}

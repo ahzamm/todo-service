@@ -1,5 +1,5 @@
 use crate::db;
-use crate::models::Status;
+use crate::models::*;
 use actix_web::{web, HttpResponse, Responder};
 use deadpool_postgres::{Client, Pool};
 
@@ -38,15 +38,9 @@ pub async fn get_items(db_pool: web::Data<Pool>, path: web::Path<(i32,)>) -> imp
     }
 }
 
-use serde::Deserialize;
-#[derive(Deserialize)]
-pub struct TodoItemRequest {
-    title: String,
-}
-
 pub async fn create_list(
     db_pool: web::Data<Pool>,
-    item: web::Json<TodoItemRequest>,
+    item: web::Json<TodoListRequest>,
 ) -> impl Responder {
     let title = item.title.clone();
     let client: Client = db_pool
@@ -59,6 +53,29 @@ pub async fn create_list(
             .header(
                 actix_web::http::header::LOCATION,
                 "http://localhost:8080/todos",
+            )
+            .finish(),
+        Err(_) => HttpResponse::InternalServerError().into(),
+    }
+}
+
+pub async fn create_item(
+    db_pool: web::Data<Pool>,
+    item: web::Json<TodoItemRequest>,
+) -> impl Responder {
+    let title = item.title.clone();
+    let list_id = item.list_id.clone();
+    let client: Client = db_pool
+        .get()
+        .await
+        .expect("Error connecting to the database");
+    let result = db::create_todo_item(&client, &title, &list_id).await;
+
+    match result {
+        Ok(_todo_list) => HttpResponse::SeeOther()
+            .header(
+                actix_web::http::header::LOCATION,
+                format!("http://localhost:8080/todo_items/{}/items/", list_id),
             )
             .finish(),
         Err(_) => HttpResponse::InternalServerError().into(),
