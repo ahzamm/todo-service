@@ -13,7 +13,7 @@ pub struct TodoList {
     pub title: String,
 }
 
-#[derive(Serialize, Deserialize, PostgresMapper)]
+#[derive(Debug, Serialize, Deserialize, PostgresMapper)]
 #[pg_mapper(table = "todo_item")]
 pub struct TodoItem {
     pub id: i32,
