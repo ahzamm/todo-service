@@ -11,4 +11,9 @@ GET http://localhost:8080/todo_items/2/items/
 
 
 ### Create List
-POST http://localhost:8080/create_list/List4
+POST http://localhost:8080/create_list
+Content-Type: application/json
+
+{
+  "title": "List4"
+}

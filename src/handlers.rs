@@ -38,8 +38,17 @@ pub async fn get_items(db_pool: web::Data<Pool>, path: web::Path<(i32,)>) -> imp
     }
 }
 
-pub async fn create_list(db_pool: web::Data<Pool>, path: web::Path<String>) -> impl Responder {
-    let title = path.into_inner();
+use serde::Deserialize;
+#[derive(Deserialize)]
+pub struct TodoItemRequest {
+    title: String,
+}
+
+pub async fn create_list(
+    db_pool: web::Data<Pool>,
+    item: web::Json<TodoItemRequest>,
+) -> impl Responder {
+    let title = item.title.clone();
     let client: Client = db_pool
         .get()
         .await
