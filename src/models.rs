@@ -32,3 +32,8 @@ pub struct TodoItemRequest {
     pub title: String,
     pub list_id: i32,
 }
+
+#[derive(Deserialize)]
+pub struct QueryParams {
+    pub id: i32,
+}

@@ -9,7 +9,7 @@ pub async fn status() -> impl Responder {
     })
 }
 
-pub async fn get_todos(db_pool: web::Data<Pool>) -> impl Responder {
+pub async fn get_all_lists(db_pool: web::Data<Pool>) -> impl Responder {
     let client: Client = db_pool
         .get()
         .await
@@ -23,8 +23,11 @@ pub async fn get_todos(db_pool: web::Data<Pool>) -> impl Responder {
     }
 }
 
-pub async fn get_items(db_pool: web::Data<Pool>, path: web::Path<(i32,)>) -> impl Responder {
-    let list_id = path.0;
+pub async fn get_one_list(
+    db_pool: web::Data<Pool>,
+    query_params: web::Query<QueryParams>,
+) -> impl Responder {
+    let list_id = query_params.id;
     let client: Client = db_pool
         .get()
         .await
@@ -76,6 +79,30 @@ pub async fn create_item(
             .header(
                 actix_web::http::header::LOCATION,
                 format!("http://localhost:8080/todo_items/{}/items/", list_id),
+            )
+            .finish(),
+        Err(_) => HttpResponse::InternalServerError().into(),
+    }
+}
+
+pub async fn checked_item(
+    db_pool: web::Data<Pool>,
+    query_params: web::Query<QueryParams>,
+) -> impl Responder {
+    let item_id = query_params.id;
+    let client: Client = db_pool
+        .get()
+        .await
+        .expect("Error connecting to the database");
+    let result = db::todo_item_checked(&client, &item_id, true).await;
+
+    // we have to extract list id and use it
+
+    match result {
+        Ok(list_id) => HttpResponse::SeeOther()
+            .header(
+                actix_web::http::header::LOCATION,
+                format!("http://localhost:8080/one-list/?id={:?}", list_id.unwrap()),
             )
             .finish(),
         Err(_) => HttpResponse::InternalServerError().into(),

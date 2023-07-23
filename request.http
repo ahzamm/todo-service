@@ -1,13 +1,12 @@
 
 ### All Lists
-GET http://localhost:8080/todos
+GET http://localhost:8080/all-lists
 
 
 
-###Items in a List
-GET http://localhost:8080/todo_items/1/items/
-###
-GET http://localhost:8080/todo_items/2/items/
+### One List
+GET http://localhost:8080/one-list/?id=1
+
 
 
 ### Create List
@@ -27,3 +26,7 @@ Content-Type: application/json
   "title": "Item6",
   "list_id": 1
 }
+
+
+### Checked Item
+PATCH http://localhost:8080/checked_item/?id=92

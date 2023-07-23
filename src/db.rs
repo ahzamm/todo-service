@@ -21,7 +21,10 @@ pub async fn get_todos(client: &Client) -> Result<Vec<TodoList>, io::Error> {
 
 pub async fn get_items(client: &Client, list_id: i32) -> Result<Vec<TodoItem>, io::Error> {
     let statement = client
-        .prepare("select * from todo_item where list_id = $1 order by id desc")
+        .prepare("SELECT *
+        FROM todo_item
+        WHERE list_id = $1
+        ORDER BY CASE WHEN checked = true THEN 1 ELSE 0 END, id DESC")
         .await
         .unwrap();
     let todo = client
@@ -66,4 +69,26 @@ pub async fn create_todo_item(
         .expect("Error creating new item");
 
     Ok(())
+}
+
+pub async fn todo_item_checked(
+    client: &Client,
+    id: &i32,
+    checked: bool,
+) -> Result<Option<i32>, io::Error> {
+    let statement = client
+        .prepare("UPDATE todo_item SET checked = $1 WHERE id = $2 returning list_id")
+        .await
+        .unwrap();
+    let rows = client
+        .query(&statement, &[&checked, &id])
+        .await
+        .expect("Error creating new item");
+
+    if let Some(row) = rows.iter().next() {
+        let list_id: i32 = row.get("list_id");
+        Ok(Some(list_id))
+    } else {
+        Ok(None)
+    }
 }

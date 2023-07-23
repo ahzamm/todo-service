@@ -26,13 +26,11 @@ async fn main() -> io::Result<()> {
         App::new()
             .data(pool.clone())
             .route("/", web::get().to(status))
-            .route("/todos{_:/?}", web::get().to(get_todos))
-            .route(
-                "/todo_items/{list_id}/items{_:/?}",
-                web::get().to(get_items),
-            )
+            .route("/all-lists{_:/?}", web::get().to(get_all_lists))
+            .route("/one-list/", web::get().to(get_one_list))
             .route("/create_list", web::post().to(create_list))
             .route("/create_item", web::post().to(create_item))
+            .route("/checked_item/", web::patch().to(checked_item))
     })
     .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
