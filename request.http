@@ -35,3 +35,7 @@ PATCH http://localhost:8080/checked_item/?id=92
 
 ### UnChecked Item
 PATCH http://localhost:8080/unchecked_item/?id=1
+
+
+### Delete List
+PATCH http://localhost:8080/delete_list/?id=2

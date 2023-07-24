@@ -56,11 +56,7 @@ pub async fn create_list(client: &Client, title: String) -> Result<Vec<TodoItem>
     Ok(todo)
 }
 
-pub async fn create_item(
-    client: &Client,
-    title: &String,
-    list_id: &i32,
-) -> Result<(), io::Error> {
+pub async fn create_item(client: &Client, title: &String, list_id: &i32) -> Result<(), io::Error> {
     let statement = client
         .prepare("INSERT INTO todo_item (title, checked, list_id) VALUES ($1, $2, $3)")
         .await
@@ -93,4 +89,28 @@ pub async fn checked_item(
     } else {
         Ok(None)
     }
+}
+
+pub async fn delete_list(client: &Client, id: &i32) -> Result<(), io::Error> {
+    let items_statement = client
+        .prepare("DELETE FROM todo_item WHERE list_id = $1")
+        .await
+        .unwrap();
+
+    client
+        .query(&items_statement, &[&id])
+        .await
+        .expect("Failed to delete item");
+
+    let list_statement = client
+        .prepare("DELETE FROM todo_list WHERE id = $1")
+        .await
+        .unwrap();
+
+    client
+        .query(&list_statement, &[&id])
+        .await
+        .expect("Failed to delete item");
+
+    Ok(())
 }

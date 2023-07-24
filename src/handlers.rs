@@ -28,6 +28,7 @@ pub async fn get_one_list(
     query_params: web::Query<QueryParams>,
 ) -> impl Responder {
     let list_id = query_params.id;
+
     let client: Client = db_pool
         .get()
         .await
@@ -46,11 +47,14 @@ pub async fn create_list(
     item: web::Json<TodoListRequest>,
 ) -> impl Responder {
     let title = item.title.clone();
+
     let client: Client = db_pool
         .get()
         .await
         .expect("Error connecting to the database");
+
     let result = db::create_list(&client, title).await;
+
     match result {
         Ok(_todo_list) => HttpResponse::SeeOther()
             .header(
@@ -68,10 +72,12 @@ pub async fn create_item(
 ) -> impl Responder {
     let title = item.title.clone();
     let list_id = item.list_id.clone();
+
     let client: Client = db_pool
         .get()
         .await
         .expect("Error connecting to the database");
+
     let result = db::create_item(&client, &title, &list_id).await;
 
     match result {
@@ -90,10 +96,12 @@ pub async fn checked_item(
     query_params: web::Query<QueryParams>,
 ) -> impl Responder {
     let item_id = query_params.id;
+
     let client: Client = db_pool
         .get()
         .await
         .expect("Error connecting to the database");
+
     let result = db::checked_item(&client, &item_id, true).await;
 
     match result {
@@ -112,10 +120,12 @@ pub async fn unchecked_item(
     query_params: web::Query<QueryParams>,
 ) -> impl Responder {
     let item_id = query_params.id;
+
     let client: Client = db_pool
         .get()
         .await
         .expect("Error connecting to the database");
+
     let result = db::checked_item(&client, &item_id, false).await;
 
     match result {
@@ -123,6 +133,30 @@ pub async fn unchecked_item(
             .header(
                 actix_web::http::header::LOCATION,
                 format!("http://localhost:8080/one-list/?id={:?}", list_id.unwrap()),
+            )
+            .finish(),
+        Err(_) => HttpResponse::InternalServerError().into(),
+    }
+}
+
+pub async fn delete_list(
+    db_pool: web::Data<Pool>,
+    query_params: web::Query<QueryParams>,
+) -> impl Responder {
+    let id = query_params.id;
+
+    let client: Client = db_pool
+        .get()
+        .await
+        .expect("Error connecting to the database");
+
+    let result = db::delete_list(&client, &id).await;
+
+    match result {
+        Ok(_) => HttpResponse::SeeOther()
+            .header(
+                actix_web::http::header::LOCATION,
+                "http://localhost:8080/all-lists",
             )
             .finish(),
         Err(_) => HttpResponse::InternalServerError().into(),

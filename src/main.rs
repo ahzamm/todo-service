@@ -32,6 +32,7 @@ async fn main() -> io::Result<()> {
             .route("/create_item", web::post().to(create_item))
             .route("/checked_item/", web::patch().to(checked_item))
             .route("/unchecked_item/", web::patch().to(unchecked_item))
+            .route("/delete_list/", web::patch().to(delete_list))
     })
     .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
