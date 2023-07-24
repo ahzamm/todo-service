@@ -21,10 +21,12 @@ pub async fn get_todos(client: &Client) -> Result<Vec<TodoList>, io::Error> {
 
 pub async fn get_items(client: &Client, list_id: i32) -> Result<Vec<TodoItem>, io::Error> {
     let statement = client
-        .prepare("SELECT *
+        .prepare(
+            "SELECT *
         FROM todo_item
         WHERE list_id = $1
-        ORDER BY CASE WHEN checked = true THEN 1 ELSE 0 END, id DESC")
+        ORDER BY CASE WHEN checked = true THEN 1 ELSE 0 END, id DESC",
+        )
         .await
         .unwrap();
     let todo = client

@@ -96,7 +96,27 @@ pub async fn checked_item(
         .expect("Error connecting to the database");
     let result = db::todo_item_checked(&client, &item_id, true).await;
 
-    // we have to extract list id and use it
+    match result {
+        Ok(list_id) => HttpResponse::SeeOther()
+            .header(
+                actix_web::http::header::LOCATION,
+                format!("http://localhost:8080/one-list/?id={:?}", list_id.unwrap()),
+            )
+            .finish(),
+        Err(_) => HttpResponse::InternalServerError().into(),
+    }
+}
+
+pub async fn unchecked_item(
+    db_pool: web::Data<Pool>,
+    query_params: web::Query<QueryParams>,
+) -> impl Responder {
+    let item_id = query_params.id;
+    let client: Client = db_pool
+        .get()
+        .await
+        .expect("Error connecting to the database");
+    let result = db::todo_item_checked(&client, &item_id, false).await;
 
     match result {
         Ok(list_id) => HttpResponse::SeeOther()
