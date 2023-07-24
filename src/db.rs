@@ -114,3 +114,22 @@ pub async fn delete_list(client: &Client, id: &i32) -> Result<(), io::Error> {
 
     Ok(())
 }
+
+pub async fn delete_item(client: &Client, id: &i32) -> Result<Option<i32>, io::Error> {
+    let statement = client
+        .prepare("DELETE FROM todo_item WHERE id = $1 returning list_id")
+        .await
+        .unwrap();
+
+    let rows = client
+        .query(&statement, &[&id])
+        .await
+        .expect("Failed to delete item");
+
+    if let Some(row) = rows.iter().next() {
+        let list_id: i32 = row.get("list_id");
+        Ok(Some(list_id))
+    } else {
+        Ok(None)
+    }
+}

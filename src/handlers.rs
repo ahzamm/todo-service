@@ -162,3 +162,27 @@ pub async fn delete_list(
         Err(_) => HttpResponse::InternalServerError().into(),
     }
 }
+
+pub async fn delete_item(
+    db_pool: web::Data<Pool>,
+    query_params: web::Query<QueryParams>,
+) -> impl Responder {
+    let id = query_params.id;
+
+    let client: Client = db_pool
+        .get()
+        .await
+        .expect("Error connecting to the database");
+
+    let result = db::delete_item(&client, &id).await;
+
+    match result {
+        Ok(list_id) => HttpResponse::SeeOther()
+            .header(
+                actix_web::http::header::LOCATION,
+                format!("http://localhost:8080/one-list/?id={:?}", list_id.unwrap()),
+            )
+            .finish(),
+        Err(_) => HttpResponse::InternalServerError().into(),
+    }
+}
