@@ -3,7 +3,7 @@ use deadpool_postgres::Client;
 use std::io;
 use tokio_pg_mapper::FromTokioPostgresRow;
 
-pub async fn get_todos(client: &Client) -> Result<Vec<TodoList>, io::Error> {
+pub async fn get_all_lists(client: &Client) -> Result<Vec<TodoList>, io::Error> {
     let statement = client
         .prepare("select * from todo_list order by id desc")
         .await
@@ -19,7 +19,7 @@ pub async fn get_todos(client: &Client) -> Result<Vec<TodoList>, io::Error> {
     Ok(todo)
 }
 
-pub async fn get_items(client: &Client, list_id: i32) -> Result<Vec<TodoItem>, io::Error> {
+pub async fn get_one_list(client: &Client, list_id: i32) -> Result<Vec<TodoItem>, io::Error> {
     let statement = client
         .prepare(
             "SELECT *
@@ -40,7 +40,7 @@ pub async fn get_items(client: &Client, list_id: i32) -> Result<Vec<TodoItem>, i
     Ok(todo)
 }
 
-pub async fn create_todo(client: &Client, title: String) -> Result<Vec<TodoItem>, io::Error> {
+pub async fn create_list(client: &Client, title: String) -> Result<Vec<TodoItem>, io::Error> {
     let statement = client
         .prepare("INSERT INTO todo_list (title) VALUES ($1)")
         .await
@@ -56,7 +56,7 @@ pub async fn create_todo(client: &Client, title: String) -> Result<Vec<TodoItem>
     Ok(todo)
 }
 
-pub async fn create_todo_item(
+pub async fn create_item(
     client: &Client,
     title: &String,
     list_id: &i32,
@@ -73,7 +73,7 @@ pub async fn create_todo_item(
     Ok(())
 }
 
-pub async fn todo_item_checked(
+pub async fn checked_item(
     client: &Client,
     id: &i32,
     checked: bool,

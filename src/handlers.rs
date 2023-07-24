@@ -15,7 +15,7 @@ pub async fn get_all_lists(db_pool: web::Data<Pool>) -> impl Responder {
         .await
         .expect("Error connecting to tohe database");
 
-    let result = db::get_todos(&client).await;
+    let result = db::get_all_lists(&client).await;
 
     match result {
         Ok(todos) => HttpResponse::Ok().json(todos),
@@ -33,7 +33,7 @@ pub async fn get_one_list(
         .await
         .expect("Error connecting to the database");
 
-    let result = db::get_items(&client, list_id).await;
+    let result = db::get_one_list(&client, list_id).await;
 
     match result {
         Ok(todo_items) => HttpResponse::Ok().json(todo_items),
@@ -50,7 +50,7 @@ pub async fn create_list(
         .get()
         .await
         .expect("Error connecting to the database");
-    let result = db::create_todo(&client, title).await;
+    let result = db::create_list(&client, title).await;
     match result {
         Ok(_todo_list) => HttpResponse::SeeOther()
             .header(
@@ -72,7 +72,7 @@ pub async fn create_item(
         .get()
         .await
         .expect("Error connecting to the database");
-    let result = db::create_todo_item(&client, &title, &list_id).await;
+    let result = db::create_item(&client, &title, &list_id).await;
 
     match result {
         Ok(_todo_list) => HttpResponse::SeeOther()
@@ -94,7 +94,7 @@ pub async fn checked_item(
         .get()
         .await
         .expect("Error connecting to the database");
-    let result = db::todo_item_checked(&client, &item_id, true).await;
+    let result = db::checked_item(&client, &item_id, true).await;
 
     match result {
         Ok(list_id) => HttpResponse::SeeOther()
@@ -116,7 +116,7 @@ pub async fn unchecked_item(
         .get()
         .await
         .expect("Error connecting to the database");
-    let result = db::todo_item_checked(&client, &item_id, false).await;
+    let result = db::checked_item(&client, &item_id, false).await;
 
     match result {
         Ok(list_id) => HttpResponse::SeeOther()
