@@ -2,6 +2,7 @@ mod config;
 mod db;
 mod handlers;
 mod models;
+mod redis_client;
 
 use crate::config::Config;
 use crate::handlers::*;
@@ -17,6 +18,8 @@ async fn main() -> io::Result<()> {
     let config = Config::from_env().unwrap();
     let pool = config.pg.create_pool(NoTls).unwrap();
 
+    let redis_client = redis_client::create_redis_client();
+
     println!(
         "Starting server at http://{}:{}",
         config.server.host, config.server.port
@@ -25,6 +28,7 @@ async fn main() -> io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .data(pool.clone())
+            .data(redis_client.clone())
             .route("/", web::get().to(status))
             .route("/all-lists{_:/?}", web::get().to(get_all_lists))
             .route("/one-list/", web::get().to(get_one_list))

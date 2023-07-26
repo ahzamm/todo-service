@@ -5,7 +5,7 @@ GET http://localhost:8080/all-lists
 
 
 ### One List
-GET http://localhost:8080/one-list/?id=3
+GET http://localhost:8080/one-list/?id=1
 
 
 
